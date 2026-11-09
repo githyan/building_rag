@@ -51,7 +51,7 @@ class parse_document:
         return section
 
     # chunking function untuk membuat chunks metadata
-    def chunking(self, chunk_size: int = 300, chunk_overlap: int = 100):
+    def chunking(self, chunk_size: int = 100, chunk_overlap: int = 50):
 
         # Penerapan chunking dari langchain_core, ini lebih baik karena menerapkan pemotongan
         # setiap kata dari sequences berdasarkan pada makna semantic dokumen
@@ -68,24 +68,10 @@ class parse_document:
             # Ekstraksi chunks dari data page_content yang berisi dokumen Markdown
             semantic_chunks = splitter.split_text(data.page_content)
             parsed_chunk = map(self.parse_markdown, semantic_chunks)
-            print(list(parsed_chunk))
             new_metadata: list[Document] = []
             for section in parsed_chunk:
                 new_metadata.extend(filter(lambda x: x["content"].strip(), section))
                 self.save_metadata(new_metadata, source, filename)
-
-                # self.all_document_metadata.extend(
-                #     Document(
-                #         page_content=document["content"],
-                #         metadata={
-                #             "source": source,
-                #             "filename": filename,
-                #             "chunk_id": document["content_id"],
-                #             "title": document["header"],
-                #         },
-                #     )
-                #     for document in new_metadata
-                # )
 
         return self.all_document_metadata
 

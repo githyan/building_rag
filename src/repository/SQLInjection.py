@@ -1,9 +1,13 @@
+import os
 import psycopg2 as psy
 from pathlib import Path
+from dotenv import load_dotenv
 
 from src.repository.interface import abstractRepository
 from langchain_core.documents import Document
 from google import genai
+
+load_dotenv()
 
 
 class SQL_Injection(abstractRepository):
@@ -52,9 +56,7 @@ class SQL_Injection(abstractRepository):
 
     def create_chunks(self, data: list[Document]):
 
-        client = genai.Client(
-            api_key="AQ.Ab8RN6IZCQKogapCgolJPNPDjr0t2ZTzGBjvVNXxjOWjIj2p_A",
-        )
+        client = genai.Client(api_key=os.getenv("GENAI_API_KEY"))
 
         if self.curr.pgresult_ptr is not None:
             for index, chunk in enumerate(data):

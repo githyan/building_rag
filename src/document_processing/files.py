@@ -18,12 +18,13 @@ class load_documents:
 
     def extract_documents(self, ext_tuple=(".txt", ".md", ".pdf")):
 
-        data_frame: list[Document] = []
         if self.extension[1:] in ext_tuple:
-            isi_dir = list(self.path.rglob(f"{self.extension}"))
+            isi_dir: list = list(self.path.rglob(f"{self.extension}"))
             self.datasets.extend(
                 Document(
-                    page_content=" ".join(f.read_text(encoding="UTF-8").split()),
+                    page_content=" ".join(
+                        f.read_text(encoding="UTF-8").lower().split()
+                    ),
                     metadata={"source": str(f), "filename": self.path.name},
                 )
                 for f in isi_dir
