@@ -9,8 +9,7 @@ Langkah - langkah dalam membangun pipeline di repository ini adalah sebagai beri
 - menghasilkan embedding dari API client `gemini-embedding-001`
 
 Cara untuk menggunakannya:
-- `docker build -t pyimage:latest .`
-- 
+- build Dockerfile dengan `docker build -t pyimage:latest .` 
 ```
     mkdir /to/path
     docker run -d --rm --name pyrag -v $(pwd):/workspace pyimage:latest
@@ -21,6 +20,7 @@ Cara untuk menggunakannya:
     -v /to/path:/var/lib/postgresql \
     -p 5432:5432 \
     pgvector/pgvector:pg18-trixie
+    docker exec -it pyrag uv run main.py
 ```
 
 - Jika mempunyai konfigurasi lain silahkan untuk menambahkan sesuai dengan kebutuhan developer
