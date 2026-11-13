@@ -7,6 +7,7 @@ from src.repository.interface import abstractRepository
 from src.repository.SQLInjection import SQL_Injection
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from google import genai
 
 load_dotenv()
 
@@ -20,6 +21,7 @@ class ParsingDocument:
         )
 
     def generate_chunk(self, data: list[Document]) -> list[Document]:
+        text_split = self.text_splitter.split_documents(data)
         postgresql = SQL_Injection(
             os.getenv("DB_NAME"),
             os.getenv("DB_USER"),
@@ -28,9 +30,18 @@ class ParsingDocument:
             os.getenv("DB_PORT"),
         )
 
-        postgresql.get_chunks()
-        text_split = self.text_splitter.split_documents(data)
-        postgresql.create_chunks(text_split)
-        postgresql.curr.close()
-        postgresql.connect.close()
-
+        client = genai.Client(api_key=os.getenv("GENAI_API_KEY"))
+        postgresql.sql_table_init()
+        for idx, chunk in enumerate(text_split):
+            response = client.models.embed_content(
+                model=os.getenv("EMBEDDINGS_MODEL")
+                contents=chunk.page_content,
+            )
+            embeddings = response.embeddings[0].values
+            postgresql.create_chunks(
+                idx,
+                chunk.page_content,
+                chunk.metadata["source"],
+                chunk.metadata["filename"],
+                embeddings,
+            )
