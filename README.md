@@ -10,6 +10,7 @@ Langkah - langkah dalam membangun pipeline di repository ini adalah sebagai beri
 
 Cara untuk menggunakannya:
 - build Dockerfile dengan `docker build -t pyimage:latest .` 
+- aktifkan kontainer postgresql dan Dockerfile image dengan:
 ```
     mkdir /to/path
     docker run -d --rm --name pyrag -v $(pwd):/workspace pyimage:latest
